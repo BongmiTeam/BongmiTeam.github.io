@@ -5,18 +5,22 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hello World - Bongmi-Team</title>
+    <title>在棒糖如何写博客 - Bongmi-Team</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
-    <meta name="keywords" content="Fechin,"> 
-    <meta name="description" content="how to publish a new post
-Quick StartInstall NodejsFollow this: nodejs.org
-Clone project1$ git clon,"> 
+    <meta name="keywords" content="Bongmi,"> 
+    <meta name="description" content="
+以下说明仅供棒糖科技内部员工参考, 用来引导团队成员配置个人环境以及编写发布博文
+
+环境配置1. 安装 nodejs参考: nodejs.org
+2. 克隆项目1$ git clone git@[,"> 
     <meta name="author" content="hanling"> 
     <link rel="alternative" href="atom.xml" title="Bongmi-Team" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
     
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
     
 <link rel="stylesheet" href="/css/diaspora.css">
 
@@ -30,7 +34,7 @@ Clone project1$ git clon,">
     <div class="bar" style="width: 0;"></div>
     <a class="iconfont icon-home image-icon" href="javascript:;" data-url="https://bongmiteam.github.io"></a>
     <div title="播放/暂停" class="iconfont icon-play"></div>
-    <h3 class="subtitle">Hello World</h3>
+    <h3 class="subtitle">在棒糖如何写博客</h3>
     <div class="social">
         <div>
             <div class="share">
@@ -45,24 +49,32 @@ Clone project1$ git clon,">
     <div class="section">
         <div class="article">
     <div class='main'>
-        <h1 class="title">Hello World</h1>
+        <h1 class="title">在棒糖如何写博客</h1>
         <div class="stuff">
             <span>十月 22, 2021</span>
             
 
         </div>
         <div class="content markdown">
-            <p>how to publish a new post</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Install-Nodejs"><a href="#Install-Nodejs" class="headerlink" title="Install Nodejs"></a>Install Nodejs</h3><p>Follow this: <a target="_blank" rel="noopener" href="https://nodejs.org/zh-cn/">nodejs.org</a></p>
-<h3 id="Clone-project"><a href="#Clone-project" class="headerlink" title="Clone project"></a>Clone project</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> [bongmi-gitlab]:bongmi-blog</span><br></pre></td></tr></table></figure>
+            <blockquote>
+<p>以下说明仅供棒糖科技内部员工参考, 用来引导团队成员配置个人环境以及编写发布博文</p>
+</blockquote>
+<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><h3 id="1-安装-nodejs"><a href="#1-安装-nodejs" class="headerlink" title="1. 安装 nodejs"></a>1. 安装 nodejs</h3><p>参考: <a target="_blank" rel="noopener" href="https://nodejs.org/zh-cn/">nodejs.org</a></p>
+<h3 id="2-克隆项目"><a href="#2-克隆项目" class="headerlink" title="2. 克隆项目"></a>2. 克隆项目</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> git@[bongmi-gitlab-host]:bongmi/bongmi-blog.git</span><br></pre></td></tr></table></figure>
 
-<h3 id="Ensure-env"><a href="#Ensure-env" class="headerlink" title="Ensure env"></a>Ensure env</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh manager.sh ensure_env</span><br></pre></td></tr></table></figure>
+<h3 id="3-初始化博客的运行环境"><a href="#3-初始化博客的运行环境" class="headerlink" title="3. 初始化博客的运行环境"></a>3. 初始化博客的运行环境</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh manager.sh ensure_env</span><br></pre></td></tr></table></figure>
 
-<h3 id="Create-a-new-post-markdown"><a href="#Create-a-new-post-markdown" class="headerlink" title="Create a new post markdown"></a>Create a new post markdown</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh manager.sh new `file_name`</span><br></pre></td></tr></table></figure>
+<h3 id="4-开通权限"><a href="#4-开通权限" class="headerlink" title="4. 开通权限"></a>4. 开通权限</h3><p>将 github 账号提供给 <a href="mailto:&#104;&#97;&#x6e;&#108;&#105;&#110;&#x67;&#x40;&#98;&#x6f;&#110;&#x67;&#x6d;&#105;&#46;&#99;&#x6f;&#x6d;">&#104;&#97;&#x6e;&#108;&#105;&#110;&#x67;&#x40;&#98;&#x6f;&#110;&#x67;&#x6d;&#105;&#46;&#99;&#x6f;&#x6d;</a> 并接受邀请</p>
+<h2 id="编辑与发布"><a href="#编辑与发布" class="headerlink" title="编辑与发布"></a>编辑与发布</h2><h3 id="1-新建一篇博文"><a href="#1-新建一篇博文" class="headerlink" title="1. 新建一篇博文"></a>1. 新建一篇博文</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh manager.sh new [file_name]</span><br></pre></td></tr></table></figure>
 
-<h3 id="Preview-at-local"><a href="#Preview-at-local" class="headerlink" title="Preview at local"></a>Preview at local</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh manager.sh run</span><br></pre></td></tr></table></figure>
+<h3 id="2-编辑博文"><a href="#2-编辑博文" class="headerlink" title="2. 编辑博文"></a>2. 编辑博文</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh manager.sh open [file_name]</span><br></pre></td></tr></table></figure>
 
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh manager deploy</span><br></pre></td></tr></table></figure>
+<p>or </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh manager.sh edit [file_name]</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-本地实时预览博客"><a href="#3-本地实时预览博客" class="headerlink" title="3. 本地实时预览博客"></a>3. 本地实时预览博客</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh manager.sh run</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-发布你写的文章"><a href="#4-发布你写的文章" class="headerlink" title="4. 发布你写的文章"></a>4. 发布你写的文章</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh manager deploy</span><br></pre></td></tr></table></figure>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
@@ -72,11 +84,11 @@ Clone project1$ git clon,">
                 <ul id="audio-list" style="display:none">
                     
                         
-                            <li title='0' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                            <li title='0' data-url='https://link.hhtjim.com/163/1842784921.mp3'></li>
                         
                     
                         
-                            <li title='1' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                            <li title='1' data-url='https://link.hhtjim.com/163/1842802205.mp3'></li>
                         
                     
                 </ul>
@@ -84,13 +96,13 @@ Clone project1$ git clon,">
         </div>
         
     <div id='gitalk-container' class="comment link"
-		data-enable='false'
-        data-ae='false'
-        data-ci=''
-        data-cs=''
+		data-enable='true'
+        data-ae='true'
+        data-ci='b9f46bd421a658a350f7'
+        data-cs='7e686740e2b7cef15e30c723425951bfde871b3d'
         data-r=''
-        data-o=''
-        data-a=''
+        data-o='BongmiTeam'
+        data-a='BongmiTeam'
         data-d='false'
     >查看评论</div>
 
@@ -103,6 +115,8 @@ Clone project1$ git clon,">
     </div>
 </div>
 </body>
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 
 
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
