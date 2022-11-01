@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><title>内网穿透教程</title><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=0.5"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/css/highlight/xcode.min.css"><link rel="stylesheet" href="/css/bootstrap/bootstrap-tooltips.css"><link rel="stylesheet" href="/css/post.css"><script src="/js/jquery.min.js"></script><meta name="generator" content="Hexo 5.4.0"></head><body><script>if (/mobile/i.test(navigator.userAgent) || /android/i.test(navigator.userAgent)) {
+  document.body.classList.add('mobile')
+}</script><div><div class="inner"><p><span></span><a href="/">返回</a><span></span></p><h1>内网穿透教程</h1><div class="time">2022-02-18 by mayunfei</div><p>ngrok 是一个反向代理，通过在公共端点和本地运行的 Web 服务器之间建立一个安全的通道，实现内网主机的服务可以暴露给外网。ngrok 可捕获和分析所有通道上的流量，便于后期分析和重放，所以ngrok可以很方便地协助服务端程序测试。</p>
+<h3 id="如何安装？"><a href="#如何安装？" class="headerlink" title="如何安装？"></a><strong>如何安装？</strong></h3><ol>
+<li>进入ngrok官网（ngrok.com）并注册ngrok账号。</li>
+</ol>
+<p><img src="/images/Aspose.Words.78114620-64f0-45f4-8fc1-f8f4f6c6a4d3.001.png"></p>
+<ol>
+<li>下载ngrok，m1芯片请选择arm64版本。</li>
+<li>解压下载到的安装包，双击可执行文件安装。</li>
+</ol>
+<p><img src="/images/Aspose.Words.78114620-64f0-45f4-8fc1-f8f4f6c6a4d3.002.png"></p>
+<p><img src="/images/Aspose.Words.78114620-64f0-45f4-8fc1-f8f4f6c6a4d3.003.png"></p>
+<ol>
+<li>安装好后回到官网，点击左边的Your Authtoken ，复制自己的授权码到~/ngrok2/ngrok.yml文件下，格式如下图。</li>
+</ol>
+<p><img src="/images/Aspose.Words.78114620-64f0-45f4-8fc1-f8f4f6c6a4d3.004.png"></p>
+<ol>
+<li>至此准备工作完毕，现在开始进行内网穿透，首先打开nginx对应项目的配置文件，以miscs.bongmi.com为例，将配置文件中的80端口改为81（因为80端口被fis3.bongmi.com占用，内网穿透时外网只能看到fis3.bongmi.com下的资源）。</li>
+<li>然后打开终端，执行nginx -s reolod 重启nginx服务。再执行ngrok http 81，将81端口暴露到外网，运行成功则如下所示。</li>
+</ol>
+<p><img src="/images/Aspose.Words.78114620-64f0-45f4-8fc1-f8f4f6c6a4d3.005.png"></p>
+<ol>
+<li>现在就可以通过红框中的Forwarding对应的http协议和https协议网址从外网访问到81端口下的资源了，Web Interface 是后台，可以看到访问日志。</li>
+</ol>
+<div>
+    <section id="comments" class="comments">
+        <style>
+            .utterances{max-width: 100%;}
+        </style>
+        <script 
+            src="https://utteranc.es/client.js"
+            repo="BongmiTeam/BongmiTeam.github.io"
+            issue-term="pathname"
+            label="Comment"
+            theme="boxy-light"
+            crossorigin="anonymous"
+            async>
+        </script>
+    </section>
+</div>
+
+</div></div></body><script src="/js/highlight.min.js"></script><script src="/js/main.js?v=1"></script><script src="/js/bootstrap/bootstrap.min.js"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=undefined"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '');</script></html>

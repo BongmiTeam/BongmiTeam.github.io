@@ -1,0 +1,387 @@
+<!DOCTYPE html><html lang="en"><head><title>设计模式高频考点&lt;第一季&gt;</title><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=0.5"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/css/highlight/xcode.min.css"><link rel="stylesheet" href="/css/bootstrap/bootstrap-tooltips.css"><link rel="stylesheet" href="/css/post.css"><script src="/js/jquery.min.js"></script><meta name="generator" content="Hexo 5.4.0"></head><body><script>if (/mobile/i.test(navigator.userAgent) || /android/i.test(navigator.userAgent)) {
+  document.body.classList.add('mobile')
+}</script><div><div class="inner"><p><span></span><a href="/">返回</a><span></span></p><h1>设计模式高频考点&lt;第一季&gt;</h1><div class="time">2022-03-02 by yexiayun</div><h2 id="设计模式高频考点-lt-第一季-gt"><a href="#设计模式高频考点-lt-第一季-gt" class="headerlink" title="设计模式高频考点&lt;第一季&gt;"></a>设计模式高频考点&lt;第一季&gt;</h2><p>本文带有很浓重的主观色彩，有不同观点是非常正常的，欢迎指正。</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><p>设计模式是干什么的？</p>
+</li>
+<li><p>设计原则「道」</p>
+<ul>
+<li>单一职责原则 (Single Responsibility Principle)</li>
+<li>开放-关闭原则 (Open-Closed Principle)</li>
+</ul>
+</li>
+<li><p>设计模式「术」</p>
+<ul>
+<li>代理模式</li>
+<li>享元模式</li>
+<li>迭代器模式</li>
+</ul>
+</li>
+</ul>
+<h2 id="设计模式是干什么的？"><a href="#设计模式是干什么的？" class="headerlink" title="设计模式是干什么的？"></a>设计模式是干什么的？</h2><p>产品设计，就是尽可能让用户用得更舒服。不严谨的说，我们的OOP设计模式，就是尽可能让你写的代码（大部分情况是类Class）尽可能让你的「同事」包括自己用的舒服。</p>
+<p>产品、外观、OOP对于好的设计有很多共同点，比如：简单，干净，不会绕来绕去。</p>
+<p>设计模式中「模式」二字，代表类的设计是有「道」和「术」的规律可循的。<br><img src="/images/remote.jpeg"></p>
+<h2 id="设计原则「道」（2-7）"><a href="#设计原则「道」（2-7）" class="headerlink" title="设计原则「道」（2/7）"></a>设计原则「道」（2/7）</h2><h3 id="单一职责原则-Single-Responsibility-Principle"><a href="#单一职责原则-Single-Responsibility-Principle" class="headerlink" title="单一职责原则 (Single Responsibility Principle)"></a>单一职责原则 (Single Responsibility Principle)</h3><p>一句话：越简单越幸福。你起了一个类名LoginViewController，那你最好别做和Login无关的事情。</p>
+<p>反例1：Register和Login的VC界面很像，只有部分不一样，这个时候比较糟糕的做法就：</p>
+<pre><code>class LoginViewController &#123;
+
+  enum Type &#123;
+  case login
+  case register
+  &#125;
+
+  var type: Type = .login
+
+  func doSomething1() &#123;
+    if type == .login &#123;
+      /*.login 时的逻辑..*/
+    &#125; else &#123;
+      /*.register 时的逻辑..*/
+    &#125;
+  &#125;
+
+  func doSomething2() &#123;
+    if type == .login &#123;
+      /*.login 时的逻辑..*/
+    &#125; else &#123;
+      /*.register 时的逻辑..*/
+    &#125;
+  &#125;
+&#125;
+</code></pre>
+<p>LoginViewController 承担了注册和登录的职责，显然是不满足单一原则的。</p>
+<p>显而易见的缺陷：</p>
+<ul>
+<li>改login的逻辑的时候会影响到register，改register的时候会影响到login，「测试需要两个界面都测试，更容易出bug」。</li>
+<li>随着业务的发展，login和regitser的业务可能会越来越不同，这个时候只能在代码里加更多的if 分支去写逻辑。</li>
+</ul>
+<p>解决方案：</p>
+<ul>
+<li>不太好，但我个人觉得比上面例子要好的办法，直接把LoginViewController复制一份改名RegisterViewController，各写各的逻辑，这样至少能保证改代码的时候不会互相影响。</li>
+<li>⭐️把UI/逻辑相似部分抽取出来，封装成一个个类。（有时候赶项目的时候不一定有时间做这个工作）</li>
+<li>或者，有什么更好的办法吗？</li>
+</ul>
+<h3 id="开放-关闭原则-Open-Closed-Principle"><a href="#开放-关闭原则-Open-Closed-Principle" class="headerlink" title="开放-关闭原则 (Open-Closed Principle)"></a>开放-关闭原则 (Open-Closed Principle)</h3><p>修改/新增一个功能，「尽可能」不用动到原来的代码，视情况而定。</p>
+<p><img src="/images/xiaobawang.png"><br><img src="/images/rus.png"></p>
+<p>图1小霸王游戏只要换卡就行了，图2俄罗斯方块换游戏的话要修改主板里的代码。。。显然小霸王更复合「开闭原则」</p>
+<p>这个描述比较简略，如果我们详细表述一下，那就是，添加一个新的功能应该是，在已有代码基础上扩展代码（新增模块、类、方法等），而非修改已有代码（修改模块、类、方法等）。</p>
+<p>举一个商城这边的实际例子：</p>
+<p>1、上传订单信息到棒糖服务器，服务器下发一个pid。</p>
+<p>2、调用支付宝sdk，并把pid传给支付宝sdk。</p>
+<p>很容易得到这样的伪代码</p>
+<pre><code>class func Payment &#123;
+
+  private var alipaySdk = AlipaySDK()
+
+  init() &#123;
+    alipaySdk.delegate = self
+  &#125;
+
+  func pay(with order: OrderInfo) &#123;
+    let request = BMRequest(order: order)
+
+    request.start &#123; pid
+      alipaySdk.pay(amount: order.amount,
+                    pid: pid)
+    &#125;
+  &#125;
+
+  // 支付宝的回调用
+  func alipay(_ sdk, status: ...)
+  func alipay(_ sdk, userInfo: ...)
+&#125;
+</code></pre>
+<p><img src="/images/pay1.jpeg"></p>
+<p>如果现在要加一个微信呢？你不得不在原来代码上做修改，pay方法很可能会变成这样。</p>
+<pre><code>class func Payment &#123;
+
+  private var wechatSdk = WeChatSDK() // 😓新增
+  private var alipaySdk = AlipaySDK()
+
+  init() &#123;
+    alipaySdk.delegate = self
+    wechatSdk.delegate = self
+  &#125;
+
+  // ❌修改代码
+  func pay(with order: OrderInfo, type: PayType) &#123;
+    let request = BMRequest(order: order)
+
+    request.start &#123; pid
+      // ❌修改代码
+      if (type == .alipay) &#123;
+        alipaySdk.pay(amount: order.amount, 
+                         pid: pid)
+      &#125; else if (type == .wechat) &#123;
+        wechatSdk.pay(amount: order.amount, 
+                         pid: pid)
+      &#125;
+    &#125;
+  &#125;
+
+  // 支付宝的回调用
+  func alipay(_ sdk, status: ...)
+  func alipay(_ sdk, userInfo: ...)
+
+  // 😓新增代码
+  func wechat(_ sdk, status: ...)
+  func wechat(_ sdk, userInfo:...)
+&#125;
+</code></pre>
+<p>如果要加一个京东支付，我们还得继续在源代码上修改</p>
+<p>我们的做法：</p>
+<p><img src="/images/pay2.jpeg"></p>
+<pre><code>protocol PaySdk &#123;
+  pay(amount: Int, pid: Int)
+&#125;
+
+class Alipay: PaySdk &#123;
+  func pay(amount: Int, pid: Int) &#123;
+    ...支付报相关的逻辑
+  &#125;
+
+    // 支付宝的回调用
+  func alipay(_ sdk, status: ...)
+  func alipay(_ sdk, userInfo: ...)
+&#125;
+
+class WeCheat: PaySdk &#123;
+  func pay(amount: Int, pid: Int) &#123;
+    ...微信支付逻辑
+  &#125;
+
+  // 微信回调用
+  func wechat(_ sdk, status: ...)
+  func wechat(_ sdk, userInfo:...)
+&#125;
+
+class Payment &#123;
+  private sdk: PaySdk!
+
+  init(sdk: PaySdk) &#123;
+    self.sdk = sdk
+  &#125;
+
+  func pay(with order: OrderInfo) &#123;
+    let request = BMRequest(order: order)
+    request.start &#123; pid
+      sdk.pay(amount: order.amount, 
+                       pid: pid)
+    &#125;
+&#125;
+
+//  使用
+let alipay = Payment(sdk: Alipay())
+alipay.pay(amount: ...)
+
+let wechatPay = Payment(sdk: WeCheat())
+wechatPay.pay(amount: ...)
+</code></pre>
+<p>之后如果要再来一个京东支付</p>
+<p>你只要实现PaySdk 这个协议即可：</p>
+<pre><code>class JdPay: PaySdk &#123;
+  func pay(amount: Int, pid: Int) &#123;
+    ...京东支付逻辑
+  &#125;
+
+  // 京东的回调
+  func jd(_ sdk, status: ...)
+  func jd(_ sdk, userInfo:...)
+&#125;
+
+// 使用
+let jdpay = Payment(sdk: JdPay())
+jdpay.pay(amount: ...)
+</code></pre>
+<p>新增功能写「新代码」，不需要改老代码，做到了开闭原则。</p>
+<h2 id="设计模式「术」-lt-3-23-gt"><a href="#设计模式「术」-lt-3-23-gt" class="headerlink" title="设计模式「术」&lt;3/23&gt;"></a>设计模式「术」&lt;3/23&gt;</h2><h3 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h3><p>官方说法：为其他对象提供一种代理以控制对这个对象的访问。</p>
+<p>想想我们的科学上网，就是代理模式.</p>
+<p>假如我们访问YouTube，只发了一个POST请求，过程如下：</p>
+<p>上行：客户端发起请求 —-&gt; 代理服务器——&gt; Youtube服务器</p>
+<p>下行：Youtube服务器 —–&gt; 代理服务器——&gt; 客户端</p>
+<p>下面还是来一个实际例子：</p>
+<pre><code>protocol User &#123;
+  var isPrime: Bool &#123; set get &#125;
+  func syncToServer()
+&#125;
+
+class FemometerUser: User &#123;
+
+  var isPrime: Bool
+
+  init(_ isPrime: Bool) &#123;
+    self.isPrime = isPrime
+  &#125;
+
+  func syncToServer() &#123;
+    // .. 服务器..
+  &#125;
+&#125;
+</code></pre>
+<p>假设iOS没有 KVO功能，我们想监听isPrime属性的改变，但是又不想改动原来FemometerUser、User的代码，该怎么做呢？</p>
+<pre><code>protocol User &#123;
+  var isPrime: Bool &#123; set get &#125;
+  func syncToServer()
+&#125;
+
+class FemometerUser: User &#123;
+
+  var isPrime: Bool
+
+  init(_ isPrime: Bool) &#123;
+    self.isPrime = isPrime
+  &#125;
+
+  func syncToServer() &#123;
+    // .. 服务器..
+  &#125;
+&#125;
+
+// 代理
+class UserIsPrimeObserverProxy: User &#123;
+
+  private var target: User // 真实对象
+  public var isPrimeDidChanged: ((Bool) -&gt; Void)?
+
+  var isPrime: Bool &#123;
+    set &#123;
+      // 转发给真实的对象, 可以加一些自己的逻辑
+      if newValue == target.isPrime &#123;
+        // 去重
+        return
+      &#125;
+      target.isPrime = newValue
+      isPrimeDidChanged?(newValue)
+    &#125;
+    get &#123;
+      // 从真实的对象中获取价值
+      return target.isPrime
+    &#125;
+  &#125;
+
+  func syncToServer() &#123;
+    // 转发给真实的对象
+    target.syncToServer()
+  &#125;
+
+  init(_ target: User) &#123;
+    self.target = target
+  &#125;
+&#125;
+</code></pre>
+<p>使用：</p>
+<pre><code>let user = FemometerUser(false)
+
+let observerProxy = UserIsPrimeObserverProxy(user)
+
+observerProxy.isPrimeDidChanged = &#123; newValue in
+  print(&quot;change:\(newValue)&quot;)
+&#125;
+
+// 使用代理访问
+observerProxy.isPrime = false
+observerProxy.isPrime = true
+observerProxy.isPrime = true
+observerProxy.isPrime = true
+observerProxy.isPrime = false
+
+// 使用代理访问同步服务器的方法
+observerProxy.syncToServer()
+
+// 输出
+change:true
+change:false
+</code></pre>
+<p>下面是KVO的官方实现原理图，运用了isa_hook实现对象级别的hook实现的，其本质还是代理模式。</p>
+<p><img src="/images/proxy.png"></p>
+<h3 id="享元模式"><a href="#享元模式" class="headerlink" title="享元模式"></a>享元模式</h3><p>运用共享技术有效地支持大量细粒度的对象。</p>
+<p>享元（Flyweight）的核心思想很简单：如果一个对象实例一经创建就不可变，那么反复创建相同的实例就没有必要，直接向调用方返回一个共享的实例就行，这样即节省内存，又可以减少创建对象的过程，提高运行速度。</p>
+<p>享元模式在Java标准库中有很多应用。我们知道，包装类型如Byte、Integer都是不变类，因此，反复创建同一个值相同的包装类型是没有必要的。以Integer为例，如果我们通过Integer.valueOf()这个静态工厂方法创建Integer实例，当传入的int范围在-128~+127之间时，会直接返回缓存的Integer实例：</p>
+<pre><code>public class Main &#123;
+    public static void main(String[] args) throws InterruptedException &#123;
+        Integer n1 = Integer.valueOf(100);
+        Integer n2 = Integer.valueOf(100);
+        System.out.println(n1 == n2); // true 说明地址相同
+    &#125;
+&#125;
+</code></pre>
+<p>想想我们的UITableView的复用机制，是不是用的享元模式？</p>
+<h3 id="迭代器模式"><a href="#迭代器模式" class="headerlink" title="迭代器模式"></a>迭代器模式</h3><p>官方说法：<strong>迭代器模式</strong>是一种行为设计模式，让你能在不暴露集合底层表现形式 （列表、 栈和树等） 的情况下遍历集合中所有的元素。</p>
+<p>还是来一个fm实际例子，我们想实现一个这样的开发体验</p>
+<pre><code>let body1 = BodyStatus(type: .bbt, id: 1)
+let body2 = BodyStatus(type: .period, id: 2)
+let body3 = BodyStatus(type: .bbt, id: 3)
+let body4 = BodyStatus(type: .bbt, id: 4)
+let body5 = BodyStatus(type: .period, id: 5)
+let body6 = BodyStatus(type: .bbt, id: 6)
+
+let seq = PeroidSequence(origin: [body1,
+                                  body2,
+                                  body3,
+                                  body4,
+                                  body5,
+                                  body6])
+                                  
+for i in seq &#123;
+  print(i.id)
+&#125;
+// 输出结果 为 2 和 5
+</code></pre>
+<p>​    </p>
+<p>下面是实现方法</p>
+<pre><code>struct PeroidSequence: Sequence &#123;
+
+  let origin: [BodyStatus]
+
+  func makeIterator() -&gt; PeriodIterator &#123;
+    return PeriodIterator(self)
+  &#125;
+&#125;
+
+struct PeriodIterator: IteratorProtocol &#123;
+
+  typealias Element = BodyStatus
+  private var index = 0
+  private let seq: PeroidSequence
+
+  init(_ seq: PeroidSequence) &#123;
+    self.seq = seq
+  &#125;
+
+  mutating func next() -&gt; BodyStatus? &#123;
+    let count = seq.origin.count
+    while (index &lt; count &amp;&amp; seq.origin[index].type != .period) &#123;
+      index += 1
+    &#125;
+    if index &gt;= count &#123;
+      return nil
+    &#125;
+    let result = seq.origin[index]
+    index += 1
+    return result
+  &#125;
+&#125;
+</code></pre>
+<p>可以看到，我们我们把「访问type为period的bodystatus的逻辑」封装起来了，下次使用只要用「更加优雅」for ..in 就可以了，不需要每次在for循环里做判断。</p>
+<p>此外，我们还可以为类似二叉树这样的非线性结构创建不同的迭代器，例如：创建一个「先序遍历迭代器」和 「层次遍历迭代器」，原理同上就不写具体代码了。<br><img src="/images/tree_vis.jpeg"></p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>同事就是你的用户，互相给一些feedback吧。</p>
+<div>
+    <section id="comments" class="comments">
+        <style>
+            .utterances{max-width: 100%;}
+        </style>
+        <script 
+            src="https://utteranc.es/client.js"
+            repo="BongmiTeam/BongmiTeam.github.io"
+            issue-term="pathname"
+            label="Comment"
+            theme="boxy-light"
+            crossorigin="anonymous"
+            async>
+        </script>
+    </section>
+</div>
+</div></div></body><script src="/js/highlight.min.js"></script><script src="/js/main.js?v=1"></script><script src="/js/bootstrap/bootstrap.min.js"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=undefined"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '');</script></html>

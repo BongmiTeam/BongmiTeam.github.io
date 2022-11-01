@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="en"><head><title>曲线模块入门</title><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=0.5"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/css/highlight/xcode.min.css"><link rel="stylesheet" href="/css/bootstrap/bootstrap-tooltips.css"><link rel="stylesheet" href="/css/post.css"><script src="/js/jquery.min.js"></script><meta name="generator" content="Hexo 5.4.0"></head><body><script>if (/mobile/i.test(navigator.userAgent) || /android/i.test(navigator.userAgent)) {
+  document.body.classList.add('mobile')
+}</script><div><div class="inner"><p><span></span><a href="/">返回</a><span></span></p><h1>曲线模块入门</h1><div class="time">2022-02-18 by yexiayun</div><h1 id="Charts-0-简单入门篇"><a href="#Charts-0-简单入门篇" class="headerlink" title="Charts - 0 - 简单入门篇"></a>Charts - 0 - 简单入门篇</h1><h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li>简介</li>
+<li>画出你自己想要的曲线，回到梦开始的地方</li>
+<li>一些奇技淫巧</li>
+</ul>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a target="_blank" rel="noopener" href="https://github.com/mcconkiee/ios-charts">https://github.com/mcconkiee/ios-charts</a></p>
+<ul>
+<li>Xcode 6.3 / Swift 1.2</li>
+<li>iOS 7.0 (Drag .swift files to your project)</li>
+<li>iOS 8.0 (Use as an <strong>Embedded</strong> Framework)</li>
+</ul>
+<p>I’ve chosen to write it in <code>Swift</code> as it can be highly optimized by the compiler, and can be used in both <code>Swift</code> and <code>ObjC</code> project. The demo project is written in <code>ObjC</code> to demonstrate how it works.</p>
+<p><strong>An amazing feature of this library now, both Android and iOS</strong>, is the time it saves you when developing for both platforms, as the learning curve is singleton- it happens only once, and the code stays very similar so developers don’t have to go around and re-invent the app to produce the same output with a different library. (And that’s not even considering the fact that there’s not really another good choice out there currently…) </p>
+<p>总结：</p>
+<ul>
+<li>安卓有对应的框架。</li>
+<li>支持 <code>oc</code> 和 <code>Swift</code> 开发。</li>
+<li>更多详细内容去上面官方地址查看。</li>
+</ul>
+<h2 id="画出你自己想要的曲线，回到梦开始的地方"><a href="#画出你自己想要的曲线，回到梦开始的地方" class="headerlink" title="画出你自己想要的曲线，回到梦开始的地方"></a>画出你自己想要的曲线，回到梦开始的地方</h2><p>这是Fasting App中统计一日三餐情况的图表，也是一个最简单的例子，包含了大部分你想要的东西。</p>
+<img src="/images/chart_0_1.jpeg" width="300" height="250" />
+
+<p><strong>第一步，看看UI稿，看看自己和Charts中哪一种图表类比较接近。</strong></p>
+<img src="/images/chart_0_2.jpeg" width="470" height="580"  />
+
+<p>我这里显然是ScatterChart</p>
+<p><strong>第二步，初始化你的类，以及一些初始参数，这里我只写一些重要的。</strong></p>
+<pre><code>public lazy var chart: ScatterChartView = &#123;
+  let view = ScatterChartView()
+  view.clipsToBounds = false
+  return view
+&#125;()
+
+chart.leftAxis.axisMinimum = 0 // y轴最小值
+chart.leftAxis.axisMaximum = 24 * 60 * 60 // y轴最大值，一天24小时的秒数
+chart.xAxis.valueFormatter = ChartXAxisFormatter() // x轴的显示格式，后面会自定义写一个
+chart.xAxis.drawLabelsEnabled = true // 是否显示x轴底部坐标信息
+chart.xAxis.labelPosition = .bottom // x轴坐标信息显示位置
+chart.setVisibleXRangeMaximum(Double(7)) // 一页显示多少个，这里是每周一页，所以是7
+</code></pre>
+<p><strong>第三步，自定义x轴坐标显示信息。</strong></p>
+<p>正常x轴当然是显示数字，我们这边需要自定义显示成 S M T W 这种周期缩写，你需要自己实现一个前面提到的Formatter，代码如下：</p>
+<pre><code>private class ChartXAxisFormatter: NSObject, IAxisValueFormatter &#123;
+  func stringForValue(_ value: Double, axis: AxisBase?) -&gt; String &#123;
+    let weeks = [&quot;S&quot;,&quot;M&quot;,&quot;T&quot;,&quot;W&quot;,&quot;T&quot;,&quot;F&quot;,&quot;S&quot;]
+    let v = Int(value)
+    return weeks[v % weeks.count]
+  &#125;
+&#125;
+</code></pre>
+<p>显然，你可以在stringForValue做超高自由度的映射。</p>
+<p><strong>第四步，绘制你想要的图形。</strong></p>
+<p>在第一张图中我标了一些红圈，它们都是通过Render绘制出来的，我们来捋一下需要做的事情。</p>
+<ul>
+<li><p>A、默认的柱子是一个长方形的，没有圆角，我们需要在它的上下部分各画一个圆。</p>
+</li>
+<li><p>B、需要把早中晚三种图标绘制到曲线制定位置上。</p>
+</li>
+</ul>
+<p>对于A：</p>
+<p>首先先编写一个XAxisRenderer：</p>
+<pre><code>open class BMFTTrendDietXaxisRenderer: XAxisRenderer &#123;
+
+  open override func drawGridLine(context: CGContext, x: CGFloat, y: CGFloat) &#123;
+    if x &gt;= viewPortHandler.offsetLeft
+        &amp;&amp; x &lt;= viewPortHandler.chartWidth &#123;
+      guard let xAxis = self.axis as? XAxis else &#123; return &#125;
+      let halfGridLineWidth = xAxis.gridLineWidth / 2.0
+      context.beginPath()
+      context.move(to: CGPoint(x: x, y: viewPortHandler.contentTop + halfGridLineWidth))
+      context.addLine(to: CGPoint(x: x, y: viewPortHandler.contentBottom - halfGridLineWidth))
+      context.strokePath()
+      context.setFillColor(xAxis.gridColor.cgColor)
+      // 上半圆
+      context.fillEllipse(in: CGRect(x: x - halfGridLineWidth,
+                                     y: viewPortHandler.contentTop,
+                                     width: xAxis.gridLineWidth,
+                                     height: xAxis.gridLineWidth))
+      // 下半圆
+      print(viewPortHandler.contentBottom)
+      context.fillEllipse(in: CGRect(x: x - halfGridLineWidth,
+                                     y: viewPortHandler.contentBottom - xAxis.gridLineWidth,
+                                     width: xAxis.gridLineWidth,
+                                     height: xAxis.gridLineWidth))
+    &#125;
+  &#125;
+&#125;
+</code></pre>
+<p>老实说，里面具体逻辑我有点记不清了。不过你只要理解，Chart之后会通过这个类来绘制图中的长方形小柱子就可以了。接着我们还需要手动告诉chart用这个类来绘制小柱子：</p>
+<pre><code>chart.xAxisRenderer = BMFTTrendDietXaxisRenderer(viewPortHandler: renderer.viewPortHandler, xAxis:chart.xAxis, transformer: renderer.transformer)
+</code></pre>
+<p>对于B：</p>
+<p>首先也是编写一个Renderer</p>
+<pre><code>open class BMFTTrendRenderer: NSObject, IShapeRenderer &#123;
+
+  public var image: CGImage?
+
+  init(image: CGImage?) &#123;
+    super.init()
+    self.image = image
+  &#125;
+
+  open func renderShape(
+    context: CGContext,
+    dataSet: IScatterChartDataSet,
+    viewPortHandler: ViewPortHandler,
+    point: CGPoint,
+    color: NSUIColor) &#123;
+    let shapeSize = dataSet.scatterShapeSize
+    let shapeHalf = shapeSize / 2.0
+    let shapeHoleSizeHalf = dataSet.scatterShapeHoleRadius
+    let shapeHoleSize = shapeHoleSizeHalf * 2.0
+    let shapeHoleColor = dataSet.scatterShapeHoleColor
+    let shapeStrokeSize = (shapeSize - shapeHoleSize) / 2.0
+    let shapeStrokeSizeHalf = shapeStrokeSize / 2.0
+    
+    var rect = CGRect()
+    rect.origin.x = point.x - shapeHalf
+    rect.origin.y = point.y - shapeHalf
+    rect.size.width = 23
+    rect.size.height = 23
+    
+    if let image = self.image &#123;
+      context.drawFlipped(image, in: rect)
+    &#125;
+  &#125;
+&#125;
+
+extension CGContext &#123;
+
+  /// Draw `image` flipped vertically, positioned and scaled inside `rect`.
+  public func drawFlipped(_ image: CGImage, in rect: CGRect) &#123;
+    self.saveGState()
+    self.translateBy(x: 0, y: rect.origin.y + rect.height)
+    self.scaleBy(x: 1.0, y: -1.0)
+    draw(image, in: CGRect(origin: CGPoint(x: rect.origin.x, y: 0), size: rect.size), byTiling: false)
+    self.restoreGState()
+  &#125;
+&#125;
+</code></pre>
+<p>这里根据point把自定义的图标绘制到指定位置上，最后在设置数据集的时候，说明使用这个render绘制：</p>
+<pre><code>chartDataSet1.shapeRenderer = BMFTTrendRenderer(image: &quot;breakfast_trendz&quot;.image?.cgImage)
+
+chartDataSet2.shapeRenderer = BMFTTrendRenderer(image: &quot;lunch_trends&quot;.image?.cgImage)
+
+chartDataSet3.shapeRenderer = BMFTTrendRenderer(image: &quot;dinner_trends&quot;.image?.cgImage)
+</code></pre>
+<h2 id="奇技淫巧"><a href="#奇技淫巧" class="headerlink" title="奇技淫巧"></a>奇技淫巧</h2><p>我在Femometer 的横屏曲线里看到过一些奇技淫巧，比如说前面我们讲的自定义图标，它没有自己写render，而是计算相应point，自己创建一个UIImagView直接盖上去。这样写效果上没什么问题，不过如果需要支持翻页的话就凉了。</p>
+<div>
+    <section id="comments" class="comments">
+        <style>
+            .utterances{max-width: 100%;}
+        </style>
+        <script 
+            src="https://utteranc.es/client.js"
+            repo="BongmiTeam/BongmiTeam.github.io"
+            issue-term="pathname"
+            label="Comment"
+            theme="boxy-light"
+            crossorigin="anonymous"
+            async>
+        </script>
+    </section>
+</div>
+
+</div></div></body><script src="/js/highlight.min.js"></script><script src="/js/main.js?v=1"></script><script src="/js/bootstrap/bootstrap.min.js"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=undefined"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '');</script></html>

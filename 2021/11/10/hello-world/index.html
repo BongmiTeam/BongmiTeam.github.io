@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="en"><head><title>在棒糖如何写博客</title><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=0.5"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/css/highlight/xcode.min.css"><link rel="stylesheet" href="/css/bootstrap/bootstrap-tooltips.css"><link rel="stylesheet" href="/css/post.css"><script src="/js/jquery.min.js"></script><meta name="generator" content="Hexo 5.4.0"></head><body><script>if (/mobile/i.test(navigator.userAgent) || /android/i.test(navigator.userAgent)) {
+  document.body.classList.add('mobile')
+}</script><div><div class="inner"><p><span></span><a href="/">返回</a><span></span></p><h1>在棒糖如何写博客</h1><div class="time">2021-11-10 by hanling</div><blockquote>
+<p>以下说明仅供棒糖科技内部员工参考, 用来引导团队成员配置个人环境以及编写发布博文</p>
+</blockquote>
+<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><h3 id="1-安装-nodejs"><a href="#1-安装-nodejs" class="headerlink" title="1. 安装 nodejs"></a>1. 安装 nodejs</h3><p>参考: <a target="_blank" rel="noopener" href="https://nodejs.org/zh-cn/">nodejs.org</a></p>
+<h3 id="2-克隆项目"><a href="#2-克隆项目" class="headerlink" title="2. 克隆项目"></a>2. 克隆项目</h3><p><code>$ git clone git@[bongmi-gitlab-host]:bongmi/bongmi-blog.git</code></p>
+<h3 id="3-初始化博客的运行环境"><a href="#3-初始化博客的运行环境" class="headerlink" title="3. 初始化博客的运行环境"></a>3. 初始化博客的运行环境</h3><p><code>$ sh manager.sh ensure_env</code></p>
+<h3 id="4-开通权限"><a href="#4-开通权限" class="headerlink" title="4. 开通权限"></a>4. 开通权限</h3><p>将 github 账号提供给 <a href="mailto:&#104;&#x61;&#x6e;&#x6c;&#x69;&#110;&#x67;&#64;&#98;&#x6f;&#110;&#x67;&#x6d;&#105;&#46;&#99;&#111;&#109;">&#104;&#x61;&#x6e;&#x6c;&#x69;&#110;&#x67;&#64;&#98;&#x6f;&#110;&#x67;&#x6d;&#105;&#46;&#99;&#111;&#109;</a> 并接受邀请</p>
+<h2 id="编辑与发布"><a href="#编辑与发布" class="headerlink" title="编辑与发布"></a>编辑与发布</h2><h3 id="1-新建一篇博文"><a href="#1-新建一篇博文" class="headerlink" title="1. 新建一篇博文"></a>1. 新建一篇博文</h3><p><code>$ sh manager.sh new [file_name]</code></p>
+<h3 id="2-编辑博文"><a href="#2-编辑博文" class="headerlink" title="2. 编辑博文"></a>2. 编辑博文</h3><p><code>$ sh manager.sh edit [file_name]</code></p>
+<h3 id="3-本地实时预览博客"><a href="#3-本地实时预览博客" class="headerlink" title="3. 本地实时预览博客"></a>3. 本地实时预览博客</h3><p><code>$ sh manager.sh run</code></p>
+<h3 id="4-发布你写的文章"><a href="#4-发布你写的文章" class="headerlink" title="4. 发布你写的文章"></a>4. 发布你写的文章</h3><p><code>$ sh manager deploy</code></p>
+<div>
+    <section id="comments" class="comments">
+        <style>
+            .utterances{max-width: 100%;}
+        </style>
+        <script 
+            src="https://utteranc.es/client.js"
+            repo="BongmiTeam/BongmiTeam.github.io"
+            issue-term="pathname"
+            label="Comment"
+            theme="boxy-light"
+            crossorigin="anonymous"
+            async>
+        </script>
+    </section>
+</div>
+
+
+</div></div></body><script src="/js/highlight.min.js"></script><script src="/js/main.js?v=1"></script><script src="/js/bootstrap/bootstrap.min.js"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=undefined"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '');</script></html>
