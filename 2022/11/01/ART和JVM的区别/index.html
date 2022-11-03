@@ -51,6 +51,7 @@
 <p>AOT 是 art 的核心，oat 文件包含 oatdata 和 oatexec。前者包含 dex 文件内容，后者包含生成的本地机器指令，从这里看出 oat 文件回会比 dex 文件占用更大的存储空间。</p>
 <p>因为 oat 文件包含生成的本地机器指令进而可以直接运行，它同样保存在手机的 data/dalvik-cache 目录下 PMS(PackgetManagerService)—&gt;installd(守护进程)——&gt;dex2oat(/system/bin/dex2oat) 。注意存放在 data/dalvik-cache 目录下的后缀名都仍为 .dex 前者其实表示一个优化过的 .dex 文件 后者为 .art 文件。</p>
 <p>push 一个新的 apk 文件覆盖之前 /system/app 下 apk 文件，会触发 PKMS 扫描时下发 force_dex flag ，强行生成新的 vdex文件 ，覆盖之前的vdex 文件，由于某种机制，这个新 vdex 文件会 copy 到 /data/dalvik-cache/ 下，于是 art 文件也变化了。</p>
+<h2 id="引用文档"><a href="#引用文档" class="headerlink" title="引用文档"></a>引用文档</h2><p>Android系统8.0为什么比7.0要快50%，深入虚拟机源码发现答案 <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/41373fc26fd1">https://www.jianshu.com/p/41373fc26fd1</a><br>art改进 <a target="_blank" rel="noopener" href="https://source.android.com/docs/core/runtime/improvements?hl=zh-cn">https://source.android.com/docs/core/runtime/improvements?hl=zh-cn</a><br>从JVM到Dalivk再到ART <a target="_blank" rel="noopener" href="https://blog.csdn.net/stven_king/article/details/102620708">https://blog.csdn.net/stven_king/article/details/102620708</a></p>
 <div>
     <section id="comments" class="comments">
         <style>
