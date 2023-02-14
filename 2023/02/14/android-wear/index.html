@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"><head><title>Android Wear OS 入门</title><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=0.5"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/css/highlight/xcode.min.css"><link rel="stylesheet" href="/css/bootstrap/bootstrap-tooltips.css"><link rel="stylesheet" href="/css/post.css"><script src="/js/jquery.min.js"></script><meta name="generator" content="Hexo 5.4.0"></head><body><script>if (/mobile/i.test(navigator.userAgent) || /android/i.test(navigator.userAgent)) {
+  document.body.classList.add('mobile')
+}</script><div><div class="inner"><p><span></span><a href="/">返回</a><span></span></p><h1>Android Wear OS 入门</h1><div class="time">2023-02-14 by yaoxiawen</div><p>介绍入门级Android OS应用开发知识，迅速上手。<br>官方文档：<a target="_blank" rel="noopener" href="https://developer.android.com/training/wearables?hl=zh-cn">https://developer.android.com/training/wearables?hl=zh-cn</a></p>
+<h2 id="一些基本操作"><a href="#一些基本操作" class="headerlink" title="一些基本操作"></a>一些基本操作</h2><ul>
+<li>手表界面左右滑动切换卡片，上滑通知，下滑屏幕设置。</li>
+<li>右滑返回。</li>
+<li>两个按钮，一个是全局应用启动器的“最近使用”，连按两下会打开最近一个使用过的应用，另一个是全局应用启动器的全部应用。</li>
+</ul>
+<h2 id="Wear-OS-应用开发与移动应用开发的同与不同"><a href="#Wear-OS-应用开发与移动应用开发的同与不同" class="headerlink" title="Wear OS 应用开发与移动应用开发的同与不同"></a>Wear OS 应用开发与移动应用开发的同与不同</h2><p>官方文档有详细的介绍，开发重点关注以下几点：</p>
+<ul>
+<li>入口，也就是界面surface，与移动应用开发相同的surface是通知和主应用，此外Wear开发有许多独特的 surface，重点关注卡片(功能块)、复杂功能、持续性活动。</li>
+<li>界面组件，包括移动应用开发组件和Wear OS专用组件。</li>
+<li>权限，与移动应用开发相同。</li>
+<li>应用数据和文件，与移动应用开发相同。</li>
+<li>与已配对设备交互，这是Wear开发新增功能，重点关注与手机设备配对后，发送和同步数据。</li>
+</ul>
+<h2 id="卡片-功能块"><a href="#卡片-功能块" class="headerlink" title="卡片(功能块)"></a>卡片(功能块)</h2><p>手表界面左右滑动进入卡片，为应用主要入口。<br>通过TileService将此服务注册为卡片提供程序。<br>需要注意卡片使用专属布局元素，以及卡片无法访问应用的任何资源，参考卡片和复杂功能-卡片使用入门。<br>卡片开发教程：<br><a target="_blank" rel="noopener" href="https://developer.android.com/codelabs/wear-tiles?hl=zh-cn#0">https://developer.android.com/codelabs/wear-tiles?hl=zh-cn#0</a></p>
+<h2 id="复杂功能"><a href="#复杂功能" class="headerlink" title="复杂功能"></a>复杂功能</h2><p>表盘复杂功能，展示在表盘上除时间以外的其他任意位置，在表盘上的上下左右四个位置。<br>开发教程：<br><a target="_blank" rel="noopener" href="https://developer.android.com/codelabs/data-sources?hl=zh-cn#0">https://developer.android.com/codelabs/data-sources?hl=zh-cn#0</a></p>
+<h2 id="持续性活动"><a href="#持续性活动" class="headerlink" title="持续性活动"></a>持续性活动</h2><p>利用 Ongoing Activity API，应用的持续性通知可以将信息显示在 Wear OS 中多个便捷的新 surface 中，以方便用户保持互动。<br>展示地方：</p>
+<ul>
+<li>表盘正下方</li>
+<li>全局应用启动器的“最近使用”<br>开发教程：</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://developer.android.com/codelabs/ongoing-activity?hl=zh-cn#0">https://developer.android.com/codelabs/ongoing-activity?hl=zh-cn#0</a></p>
+<h2 id="发送和同步数据"><a href="#发送和同步数据" class="headerlink" title="发送和同步数据"></a>发送和同步数据</h2><ul>
+<li>直接与网络通信</li>
+<li>Wearable Data Layer API，适用于 Wear OS 手表和配对的 Android 设备</li>
+</ul>
+<p>开发Demo：<br><a target="_blank" rel="noopener" href="https://github.com/android/wear-os-samples/tree/main/DataLayer">https://github.com/android/wear-os-samples/tree/main/DataLayer</a></p>
+<div>
+    <section id="comments" class="comments">
+        <style>
+            .utterances{max-width: 100%;}
+        </style>
+        <script 
+            src="https://utteranc.es/client.js"
+            repo="BongmiTeam/BongmiTeam.github.io"
+            issue-term="pathname"
+            label="Comment"
+            theme="boxy-light"
+            crossorigin="anonymous"
+            async>
+        </script>
+    </section>
+</div>
+
+</div></div></body><script src="/js/highlight.min.js"></script><script src="/js/main.js?v=1"></script><script src="/js/bootstrap/bootstrap.min.js"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=undefined"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '');</script></html>
