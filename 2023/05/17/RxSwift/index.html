@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="en"><head><title>RxSwift</title><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=0.5"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/css/highlight/xcode.min.css"><link rel="stylesheet" href="/css/bootstrap/bootstrap-tooltips.css"><link rel="stylesheet" href="/css/post.css"><script src="/js/jquery.min.js"></script><meta name="generator" content="Hexo 5.4.0"></head><body><script>if (/mobile/i.test(navigator.userAgent) || /android/i.test(navigator.userAgent)) {
+  document.body.classList.add('mobile')
+}</script><div><div class="inner"><p><span></span><a href="/">返回</a><span></span></p><h1>RxSwift</h1><div class="time">2023-05-17 by shenpeng</div><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><code>RxSwift</code>是一个基于<code>响应式</code>编程的<code>Swift</code>框架，它提供了一种简洁而强大的方式来处理异步和事件驱动的编程任务。在<code>RxSwift</code>中，核心流程包括<code>观察者</code>、<code>可观察序列</code>和<code>订阅</code>。</p>
+<h2 id="RxSwift核心流程三部曲"><a href="#RxSwift核心流程三部曲" class="headerlink" title="RxSwift核心流程三部曲"></a>RxSwift核心流程三部曲</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// 1.创建序列</span></span><br><span class="line"> <span class="keyword">_</span> <span class="operator">=</span> <span class="type">Observable</span>&lt;<span class="type">String</span>&gt;.create &#123; ob <span class="keyword">in</span></span><br><span class="line">   <span class="comment">// 3.发送信号</span></span><br><span class="line">    ob.onNext(<span class="string">&quot;你好&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Disposables</span>.create()</span><br><span class="line">   <span class="comment">// 2.订阅序列</span></span><br><span class="line">  &#125;.subscribe(onNext: &#123; text <span class="keyword">in</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;订阅到了<span class="subst">\(text)</span>&quot;</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1.创建序列</li>
+<li>2.订阅序列</li>
+<li>3.发送信号</li>
+</ul>
+<p>上面三部曲的执行结果：</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b95f9f29790a42e5b439fb4caf945411~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br>第一次玩<code>RxSwift</code>比较好奇为什么会打印<code>订阅到了你好</code>，明明是两个<code>闭包</code>里面的代码。<br>我们先简单分析下：</p>
+<ul>
+<li>序列创建<code>create</code>后面带了<code>闭包A</code>，<code>闭包A</code>里面执行了<code>发送信号</code>的流程</li>
+<li>订阅<code>subsribe</code>后面带了<code>闭包B</code></li>
+<li>根据结果我们知道一定是先执行了<code>闭包A</code>，再把<code>闭包A</code>的<code>你好</code>传给了<code>闭包B</code>,然后输出结果</li>
+</ul>
+<h2 id="RxSwift核心逻辑分析"><a href="#RxSwift核心逻辑分析" class="headerlink" title="RxSwift核心逻辑分析"></a>RxSwift核心逻辑分析</h2><h3 id="创建序列"><a href="#创建序列" class="headerlink" title="创建序列"></a>创建序列</h3><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2fcc14d327b64ba6a1fd94dedb63cff6~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p>点进<code>create</code>函数可以看到它是拓展了<code>ObservableType</code>这个协议，同时创建了一个<code>AnonymousObservable</code>内部类（看名字是<code>匿名序列</code>，具备一些通用的特性）分析<code>AnonymousObservable</code>的继承链可以得到下面的关系图：</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e080832c096a496482985348901770b0~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<h4 id="AnonymousObservable"><a href="#AnonymousObservable" class="headerlink" title="AnonymousObservable"></a>AnonymousObservable</h4><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7849646a338246399d6698ec2053d98f~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br><code>AnonymousObservable</code>是接受<code>Element</code>泛型的继承自<code>Producer</code>的类，他接受并保存一个闭包<code>subscribeHandler</code>的参数，这个其实就是上面我们说的<code>闭包A</code>，另外有一个<code>run</code>函数（后面会提到）</p>
+<h4 id="Producer"><a href="#Producer" class="headerlink" title="Producer"></a>Producer</h4><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/152004ffd99149a09a5f17240c65f2cb~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br><code>Producer</code>是接受<code>Element</code>泛型的继承自<code>Observable</code>的类，有一个<code>subscribe</code>的实现，<code>run</code>的抽象方法，这个<code>subscribe</code>非常重要</p>
+<h4 id="Observable"><a href="#Observable" class="headerlink" title="Observable"></a>Observable</h4><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c319de1d55b141c58b2d0945bd34513f~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br><code>Observable</code>是接受<code>Element</code>泛型的实现<code>ObservableType</code>协议的类，有一个<code>subscribe</code>的抽象方法，<code>asObservable</code>的实现（返回<code>self</code>，统一万物皆序列）<br>同时<code>Observable</code>有统计引用计数的能力（<code>Resources</code>这个结构体在<code>序列</code>，<code>观察者</code>，<code>销毁者</code>等都用到，可以调试是否有内存泄露），其中的<code>AtomicInt</code>是一把<code>NSLock</code>的锁，保证数据的存取安全</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f12a487a9f9f47a99fd4eca18263bb7a~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<h4 id="ObservableType"><a href="#ObservableType" class="headerlink" title="ObservableType"></a>ObservableType</h4><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/55659bac387541deaea6837a42d79d3b~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p><code>ObservableType</code>是拓展<code>ObservableConvertibleType</code>协议的协议，定义了<code>subscribe</code>协议方法，实现了<code>asObservable()</code>方法，所以这里我们得出结论，不一定要继承<code>Observable</code>的才是<code>序列</code>，只要是实现了<code>ObservableType</code>的<code>subscribe</code>的协议方法的也可以算是<code>序列</code>，进一步佐证<code>万物接序列</code></p>
+<h4 id="ObservableConvertibleType"><a href="#ObservableConvertibleType" class="headerlink" title="ObservableConvertibleType"></a>ObservableConvertibleType</h4><p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cee4ba126f6c48dc9cc315c980e963d0~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p><code>ObservableConvertibleType</code>是个协议，关联了<code>Element</code>类型，定义<code>asObservable</code>的协议方法</p>
+<h3 id="订阅序列"><a href="#订阅序列" class="headerlink" title="订阅序列"></a>订阅序列</h3><p>点击<code>subscrib</code>e函数</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ac802ef328f7437fab3b1222d5066057~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p>它是<code>ObservableType</code>的拓展能力，创建了一个<code>AnonymousObserver</code>（匿名观察者）<br>，接受的<code>Element</code>仔细查看<code>继承链</code>代码会发现跟<code>序列创建</code>的泛型是同一个</p>
+<p>分析<code>AnonymousObserver</code>的继承链我们可以得到下图：</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4bee7322b6154980a456b9945dd741d9~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<h4 id="AnonymousObserver"><a href="#AnonymousObserver" class="headerlink" title="AnonymousObserver"></a>AnonymousObserver</h4><p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/849ad01abfdd47b287c02bd1a283db6f~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br><code>AnonymousObserver</code>是接受<code>Element</code>泛型的继承自<code>ObserverBase</code>的类<br>保存了一个<code>eventHandler</code>的闭包，这个我们定义是<code>闭包C</code><br>同时也有统计<code>引用计数</code>的能力，有一个<code>onCore</code>的实现</p>
+<h4 id="ObserverBase"><a href="#ObserverBase" class="headerlink" title="ObserverBase"></a>ObserverBase</h4><p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e637f17f91f84cf296b8927ba2c26d37~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p><code>ObserverBase</code>是接受<code>Element</code>泛型的实现<code>Disposable</code>和<code>ObserverType</code>两个协议的类，有一个<code>on</code>的实现，<code>onCore</code>的抽象方法</p>
+<h4 id="ObserverType"><a href="#ObserverType" class="headerlink" title="ObserverType"></a>ObserverType</h4><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2546aadb4ed548488200c2dc24929018~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p><code>ObserverType</code>关联了<code>Element</code>，定义了<code>on</code>的协议方法，拓展定义了<code>onNext</code>，<code>onCompleted</code>，<code>onError</code>的方法，这三个方法其实都是<code>on</code>一个<code>Event</code></p>
+<p>其中<code>Event</code>是个枚举，有三类事件：<code>next事件</code>、<code>error事件</code>和<code>completed事件</code>。</p>
+<ul>
+<li><code>next事件</code>：<code>next</code>事件携带了一个值，表示数据的更新或新的事件。</li>
+<li><code>error事件</code>：<code>error</code>事件表示发生了一个错误，中断了事件的正常流程。</li>
+<li><code>completed事件</code>：<code>completed</code>事件表示事件流的结束，不再有新的事件产生。<br>观察者通过订阅可观察序列来接收事件。</li>
+</ul>
+<h4 id="Disposable"><a href="#Disposable" class="headerlink" title="Disposable"></a>Disposable</h4><p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a2eb64a0c4934fcdb65647a459a4820c~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p><code>Disposable</code>这个协议比较简单，定义了<code>dispose</code>方法</p>
+<h4 id="订阅流程分析"><a href="#订阅流程分析" class="headerlink" title="订阅流程分析"></a>订阅流程分析</h4><ul>
+<li><p>1.调用<code>self.asObservable().subscribe(observer)</code></p>
+<ul>
+<li>这个<code>self</code>是<code>AnonymousObservable</code>的实例</li>
+<li>调用<code>asObservable</code>方法通过继承链最终调用<code>Observable</code>的实现，返回<code>self</code>,也就还是<code>AnonymousObservable</code>的实例</li>
+</ul>
+</li>
+<li><p>2.调用<code>AnonymousObservable</code>的实例的<code>subscribe</code>方法，通过继承链调用<code>Producer</code>的<code>subscribe</code>方法</p>
+</li>
+</ul>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/10801da5a9d348628b83af8d31431f0b~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<ul>
+<li>3.<code>Producer</code>的<code>run</code>方法在<code>AnonymousObservable</code>有实现</li>
+</ul>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a94a4b35583a43728abf50e367989fd3~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br>这个<code>sink</code>的处理是相当不错的，很好的做到了<code>业务下沉</code>，同时很好的运用了<code>中间件</code>和<code>单一职责</code>的设计模式，值得学习。</p>
+<p><code>sink</code>是管道的意思，<code>下水道</code>，什么东西都会往里面丢，这里面有<code>订阅者</code>，<code>销毁者</code>等</p>
+<ul>
+<li><ol start="4">
+<li><code>sink.run</code></li>
+</ol>
+</li>
+<li><ol start="5">
+<li><code>parent.subscribeHandler(AnyObserver(self))</code>这里的<code>parent</code>就是<code>AnonymousObservable</code>的实例，调用<code>subscribeHandler</code>这个也就是我们定义的<code>闭包A</code><br>这里解释了订阅的时候会来到我们的<code>闭包A</code>的原因。<br>这里需要注意到<code>AnyObserver</code>这个类，他里面保存的<code>observer</code>属性其实是<code>AnonymousObservableSink.on</code>函数</li>
+</ol>
+</li>
+</ul>
+<h3 id="发送信号"><a href="#发送信号" class="headerlink" title="发送信号"></a>发送信号</h3><p>有了上两步的基础我们分析发送信号的流程应该比较清晰了</p>
+<ul>
+<li><ol>
+<li><code>obserber.onNext</code> 其实就是<code>AnyObserver.onNext</code></li>
+</ol>
+</li>
+<li><ol start="2">
+<li><code>ObserverType.onNext</code>其实就是<code>ObserverType.on</code></li>
+</ol>
+</li>
+<li><ol start="3">
+<li>其实就是<code>AnyObserver.on</code></li>
+</ol>
+</li>
+</ul>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91e3bfebb5134d34baf8b39771f928f3~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<ul>
+<li>4.这个<code>observer</code>就是上面第二步最后的<code>AnonymousObservableSink.on</code>函数</li>
+</ul>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/977adfcb8fb94e5db033ccc88de4e844~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<ul>
+<li>5.父类<code>Sink.forwardOn</code>函数</li>
+</ul>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3594c4574de94d35b3021008457463f1~tplv-k3u1fbpfcp-watermark.image" alt="image.png"><br>这里的<code>self.observer</code>类型是 <code>AnonymousObserver</code></p>
+<ul>
+<li>6.调用<code>AnonymousObserver</code>的父类<code>ObserverBase</code>的<code>on</code>方法</li>
+</ul>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d86679c33e234013b4db1e60e7bd0f4e~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<ul>
+<li>7.调用<code>AnonymousObserver</code>的<code>onCore</code>方法</li>
+</ul>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a43c91a47fb41c79f1e9afea21abed5~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<ul>
+<li>8.调用<code>eventHandler</code>，也就是我们定义的<code>闭包C</code></li>
+<li>9.<code>闭包C</code>根据<code>Event</code>调用<code>闭包B</code>，<code>闭包B</code>输出了控制台的结果，至此，整个链路执行完毕了。</li>
+</ul>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1f087b51ea034768af99d31896d8c7a2~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p>把整个核心流程用<code>思维导图</code>描述出来：</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/338cc9f9eebc479aa76c38d581b71dcf~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><code>万物皆序列</code>，序列的时间统一了编码</li>
+<li>完整的继承了做到了<code>业务分离</code>，<code>单一职责</code></li>
+<li><code>中间价</code>模式很好的做到了<code>业务下沉</code></li>
+</ul>
+</div></div></body><script src="/js/highlight.min.js"></script><script src="/js/main.js?v=1"></script><script src="/js/bootstrap/bootstrap.min.js"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=undefined"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '');</script></html>
