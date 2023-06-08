@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="en"><head><title>向量数据库简介</title><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=0.5"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/css/highlight/xcode.min.css"><link rel="stylesheet" href="/css/bootstrap/bootstrap-tooltips.css"><link rel="stylesheet" href="/css/post.css"><script src="/js/jquery.min.js"></script><meta name="generator" content="Hexo 5.4.0"></head><body><script>if (/mobile/i.test(navigator.userAgent) || /android/i.test(navigator.userAgent)) {
+  document.body.classList.add('mobile')
+}</script><div><div class="inner"><p><span></span><a href="/">返回</a><span></span></p><h1>向量数据库简介</h1><div class="time">2023-06-04 by zhangyong</div><h2 id="向量"><a href="#向量" class="headerlink" title="向量"></a>向量</h2><p>向量是一个有大小和方向的量。在二维空间中一般使用（a,b）表示。<br><strong>加法:(a,b)+(c,d)=(a+c,b+d)</strong><br><strong>减法:(a,b)-(c,d)=(a-c,b-d)</strong><br>*<em>乘法:(a,b)<em>c=(a</em>c,b</em>c)**<br><strong>点积:(a,b)· (c,d)=a<em>c+b</em>d</strong>  </p>
+<h2 id="文字转化向量"><a href="#文字转化向量" class="headerlink" title="文字转化向量"></a>文字转化向量</h2><p>举例说“我爱我家”这句话怎么转化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;我&quot; 的向量表示：[0.1, 0.2, 0.3, ...]</span><br><span class="line">&quot;爱&quot; 的向量表示：[0.4, 0.5, 0.6, ...]</span><br><span class="line">&quot;我家&quot; 的向量表示：[0.7, 0.8, 0.9, ...]</span><br></pre></td></tr></table></figure>
+<p>对于这个句子，我们可以将每个词的向量表示进行合并或平均，得到整个句子的向量表示。以下是两种常见的方式：</p>
+<ol>
+<li><strong>向量合并（Vector Concatenation）</strong>：将每个词的向量连接在一起，形成句子的向量表示。对于 “我爱我家” 这个句子，合并后的向量表示可以是：[0.1, 0.2, 0.3, …, 0.4, 0.5, 0.6, …, 0.7, 0.8, 0.9, …]。  </li>
+<li><strong>平均向量（Average Vector）</strong>：将每个词的向量相加并求平均，得到句子的向量表示。对于 “我爱我家” 这个句子，平均后的向量表示可以是：[ (0.1+0.4+0.7)/3 , (0.2+0.5+0.8)/3 , (0.3+0.6+0.9)/3 , … ]。  </li>
+</ol>
+<h2 id="余弦相似度算法"><a href="#余弦相似度算法" class="headerlink" title="余弦相似度算法"></a>余弦相似度算法</h2><p>余弦相似度 = <strong>(A · B) / (||A|| * ||B||)</strong><br>其中，A · B 表示向量 A 与向量 B 的点积（内积），||A|| 和 ||B|| 分别表示向量 A 和向量 B 的模长。<br>根据计算得到的余弦相似度，按照相似度的大小进行排序，从高到低或从低到高。可以选择返回与查询向量最相似的前 k 个结果。<br>通过以上步骤，可以在向量数据库中使用余弦相似度算法进行查询，找到与查询向量最相似的向量。这种方法常用于文本搜索、推荐系统、图像检索等任务，其中向量表示被用来衡量数据之间的相似性。需要注意的是，对于大规模的数据库和高维向量，可能需要优化的近似算法来加速相似度计算过程。</p>
+<h2 id="向量数据库"><a href="#向量数据库" class="headerlink" title="向量数据库"></a>向量数据库</h2><p>信息向量化的概念可以追溯到上世纪50年代和60年代的信息检索领域。在这个时期，研究人员开始关注如何将文本和文档表示为数值向量，以便进行计算机处理和检索。<br>一项重要的里程碑是在1958年提出的向量空间模型（Vector Space Model），由Gerard Salton等人提出。向量空间模型将文本或文档表示为向量，其中每个维度对应于一个特定的词语或特征，而向量的值表示了该词语或特征在文本中的重要性或出现频率。这种基于向量表示的文本检索模型在信息检索领域产生了广泛影响，并成为后续研究的基础。  </p>
+<p>向量数据库是一种专门用于存储和查询向量数据的数据库系统。它提供高效的存储和检索机制，能够处理大规模的高维向量数据，如文本、图像、音频等。<br>向量数据库的设计和实现通常需要考虑以下几个方面：<br>存储结构：向量数据库需要设计适当的数据结构来存储向量数据。常见的存储结构包括基于数组或基于哈希表的索引结构，以及树结构（如B树、R树、VP树等）。这些结构可以支持高效的向量存储和检索操作。<br>距离度量：向量数据库需要支持不同的距离度量方法，用于计算向量之间的相似性或距离。常见的距离度量包括欧氏距离、余弦相似度、曼哈顿距离等。合适的距离度量方法可以在查询时准确度量向量之间的相似性。<br>索引和检索：为了加速向量检索操作，向量数据库通常会建立索引结构。索引可以基于向量的特征或属性构建，以便快速定位相关的向量。常见的索引方法包括倒排索引、KD树、LSH（局部敏感哈希）等。<br>查询优化：向量数据库需要优化查询操作，以提高检索效率和准确性。这包括使用合适的索引策略、查询重写和优化、并行处理等技术，以实现高效的向量查询。<br>扩展性和容错性：向量数据库需要支持扩展性和容错性，以适应大规模数据和高并发查询的需求。  </p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
+<li>chatgpt额外的信息库  </li>
+<li>人脸识别<br> 1). 人脸检测：在图像或视频中检测和定位人脸区域。这一步骤使用的通常是基于机器学习或深度学习的人脸检测算法。<br> 2). 人脸对齐：对检测到的人脸进行对齐，将其调整为标准化的姿态和尺寸。这一步骤有助于减少不同图像之间的差异性，提高后续特征提取的准确性。<br> 3). 特征提取：从对齐后的人脸图像中提取关键特征。这些特征通常表示为一个向量，被称为人脸特征向量或人脸嵌入。特征提取算法可以使用传统的计算机视觉方法，如局部二值模式（Local Binary Patterns，LBP），也可以使用深度学习模型，如卷积神经网络（Convolutional Neural Networks，CNN）。<br> 4). 向量比对和匹配：将待识别的人脸特征向量与已存储的人脸特征向量进行比对和匹配。常见的向量算法包括欧氏距离、余弦相似度和曼哈顿距离等。通过计算两个向量之间的相似度或距离，并设定一个阈值，系统可以判断人脸是否匹配，从而实现人脸识别。</li>
+<li>指纹识别<br> 指纹图像的转换通常使用特征提取算法，将指纹图像中的关键特征提取出来，并将其转换为向量形式。这些特征可以包括指纹纹线的形状、方向、交叉点等。</li>
+</ol>
+<h2 id="chroma"><a href="#chroma" class="headerlink" title="chroma"></a>chroma</h2><p><a target="_blank" rel="noopener" href="https://github.com/chroma-core/chroma">https://github.com/chroma-core/chroma</a><br><img src="/images/WechatIMG83.png" alt="image.png"><br>openai api获取embedding<br><img src="/images/WechatIMG87.png" alt="image.png"></p>
+<h2 id="常见算法"><a href="#常见算法" class="headerlink" title="常见算法"></a>常见算法</h2><ul>
+<li>向量索引算法：向量数据库通常需要构建索引结构以支持高效的向量检索。常见的向量索引算法包括 KD-Tree、Ball Tree、R-Tree、VP-Tree 等。这些算法可以将向量空间划分为多个子空间，以快速定位和检索相似的向量。  </li>
+<li>相似度度量算法：在向量数据库中，需要计算向量之间的相似度或距离，以进行相似性查询和排序。常用的相似度度量算法包括欧氏距离、余弦相似度、曼哈顿距离、Jaccard 相似系数等。这些算法可以衡量向量之间的相似性或差异性，从而实现向量的比较和排序。</li>
+<li>聚类算法：聚类算法用于将相似的向量分组到同一簇中，以便更有效地组织和管理向量数据。常见的聚类算法包括 K-Means、层次聚类、DBSCAN 等。这些算法可以根据向量之间的相似性将它们划分为不同的簇，提供更快速的数据访问和分析。</li>
+<li>降维算法：在大规模高维向量数据中，降维算法用于减少数据维度，以节省存储空间和提高计算效率。常用的降维算法包括主成分分析（Principal Component Analysis，PCA）、t-SNE、LLE 等。这些算法可以将高维向量映射到低维空间，保留向量之间的相似性信息。</li>
+<li>哈希算法：哈希算法用于将向量映射到哈希码，以实现高效的近似相似性搜索。常见的哈希算法包括 Locality Sensitive Hashing（LSH）、MinHash、SimHash 等。这些算法可以将向量映射到哈希码，使得相似的向量有更高的概率具有相似的哈希码，从而加速相似性搜索。</li>
+</ul>
+<h3 id="欧式距离"><a href="#欧式距离" class="headerlink" title="欧式距离"></a>欧式距离</h3><p>欧氏空间中两个向量之间的距离</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">d = √((x₁ - y₁)² + (x₂ - y₂)² + ... + (xn - yn)²)</span><br></pre></td></tr></table></figure>
+<h3 id="曼哈顿距离"><a href="#曼哈顿距离" class="headerlink" title="曼哈顿距离"></a>曼哈顿距离</h3><p>沿坐标轴移动所需的最短路径长度</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">d = |x₁ - y₁| + |x₂ - y₂| + ... + |xn - yn|</span><br></pre></td></tr></table></figure>
+<h3 id="Jaccard-相似系数"><a href="#Jaccard-相似系数" class="headerlink" title="Jaccard 相似系数"></a>Jaccard 相似系数</h3><p>两个集合交集元素数量与并集元素数量的比值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">J(A, B) = |A ∩ B| / |A ∪ B|</span><br></pre></td></tr></table></figure>
+
+<div>
+    <section id="comments" class="comments">
+        <style>
+            .utterances{max-width: 100%;}
+        </style>
+        <script 
+            src="https://utteranc.es/client.js"
+            repo="BongmiTeam/BongmiTeam.github.io"
+            issue-term="pathname"
+            label="Comment"
+            theme="boxy-light"
+            crossorigin="anonymous"
+            async>
+        </script>
+    </section>
+</div>
+
+</div></div></body><script src="/js/highlight.min.js"></script><script src="/js/main.js?v=1"></script><script src="/js/bootstrap/bootstrap.min.js"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=undefined"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '');</script></html>
